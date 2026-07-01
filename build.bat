@@ -34,7 +34,7 @@ REM Offer to create a Desktop shortcut
 set /p SHORTCUT="Create Desktop shortcut now? (y/n): "
 if /i "%SHORTCUT%"=="y" (
     powershell -NoProfile -Command ^
-        "$exe = Resolve-Path 'dist\Grecovery.exe'; $ws = New-Object -ComObject WScript.Shell; $sc = $ws.CreateShortcut([System.IO.Path]::Combine($ws.SpecialFolders('Desktop'), 'Grecovery.lnk')); $sc.TargetPath = $exe; $sc.IconLocation = $exe; $sc.Description = 'Gateway Manual Recovery System'; $sc.Save(); Write-Host 'Desktop shortcut created.'"
+        "$exe = (Resolve-Path 'dist\Grecovery.exe').Path; $ws = New-Object -ComObject WScript.Shell; $sc = $ws.CreateShortcut([System.IO.Path]::Combine($ws.SpecialFolders('Desktop'), 'Grecovery.lnk')); $sc.TargetPath = $exe; $sc.IconLocation = $exe; $sc.Description = 'Gateway Manual Recovery System'; $sc.Save(); Write-Host 'Desktop shortcut created.'"
 )
 
 pause

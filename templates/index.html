@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grecovery</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23F37320'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial Black,Arial,sans-serif' font-weight='900' font-size='40' fill='white'%3EG%3C/text%3E%3C/svg%3E">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -168,12 +169,24 @@
         <!-- Tool Panel -->
         <div class="tool-panel">
 
-            <!-- Step 1 – Under Progress -->
-            <div style="background:#FFF8E1;border:1.5px dashed #F9A825;border-radius:12px;padding:1rem 1.4rem;display:flex;align-items:center;gap:1rem;">
-                <div style="width:30px;height:30px;border-radius:50%;background:#F9A825;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem;">🚧</div>
-                <div>
-                    <div style="font-size:0.92rem;font-weight:700;color:#E65100;margin-bottom:0.2rem;">Find Normal Gateway — Under Progress</div>
-                    <div style="font-size:0.8rem;color:#795548;line-height:1.5;">Automatic Enlighten gateway discovery is being built. For now, manually enter the Normal Gateway serial number in Step 2 below.</div>
+            <!-- Step 1 – Find Normal Gateway -->
+            <div class="step-card">
+                <div class="step-badge">1</div>
+                <div class="step-content">
+                    <div class="step-title">Find Normal Gateway</div>
+                    <div class="form-group">
+                        <label for="part_num">Part Number</label>
+                        <input type="text" id="part_num" placeholder="e.g. 800-00071,800-00243">
+                    </div>
+                    <div class="form-group">
+                        <label for="sw_version">Software Version</label>
+                        <input type="text" id="sw_version" placeholder="e.g. R3.1.0 (c30c4f)">
+                    </div>
+                    <button class="btn btn-primary" onclick="findNormalGateway()" style="margin-top:0.4rem;">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        Find Normal Gateways on Enlighten
+                    </button>
+                    <div style="margin-top:0.6rem;font-size:0.75rem;color:#8A96A8;">Opens Enlighten in a new tab — check the results and copy a healthy serial number into Step 2 below.</div>
                 </div>
             </div>
 
@@ -467,7 +480,20 @@
             }
         }
 
-        // Search active gateways — UNDER PROGRESS
+        function findNormalGateway() {
+            const partNum  = document.getElementById('part_num').value.trim();
+            const swVer    = document.getElementById('sw_version').value.trim();
+            if (!partNum || !swVer) {
+                alert("Please enter both Part Number and Software Version.");
+                return;
+            }
+            const base = "https://enlighten.enphaseenergy.com/admin/devices/search";
+            const url  = `${base}?device_type_id=1&part_num=${encodeURIComponent(partNum)}&software_version=${encodeURIComponent(swVer)}&status=active`;
+            appendLog(`Opening Enlighten gateway search: ${url}`, "info");
+            window.open(url, '_blank');
+        }
+
+        // Search active gateways (legacy stub)
         async function searchNormalGateway() {
             appendLog("Find Normal Gateway feature is under progress.", "warning");
             return;
