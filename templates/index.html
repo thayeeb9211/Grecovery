@@ -29,6 +29,8 @@
         .brand-text { display: flex; flex-direction: column; gap: 1px; }
         .brand-name { font-size: 1.1rem; font-weight: 700; color: var(--text); letter-spacing: -0.3px; line-height: 1; }
         .brand-sub { font-size: 0.68rem; color: var(--text-muted); line-height: 1; letter-spacing: 0.2px; }
+        .version-badge { font-size: 0.62rem; font-weight: 700; color: var(--orange); background: var(--orange-light); border: 1px solid rgba(243,115,32,0.25); border-radius: 20px; padding: 0.1rem 0.52rem; letter-spacing: 0.3px; margin-left: 0.5rem; align-self: center; }
+        [data-theme="dark"] .version-badge { background: rgba(243,115,32,0.12); border-color: rgba(243,115,32,0.3); }
         .header-right { display: flex; align-items: center; }
         .btn-header { background: transparent; border: 1.5px solid var(--border); color: var(--text-sec); cursor: pointer; display: flex; align-items: center; gap: 0.42rem; padding: 0.44rem 0.95rem; border-radius: 8px; font-family: inherit; font-size: 0.8rem; font-weight: 500; transition: all 0.18s; }
         .btn-header:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-light); }
@@ -173,7 +175,7 @@
         <div class="brand">
             <div class="brand-logo">G</div>
             <div class="brand-text">
-                <span class="brand-name">Grecovery</span>
+                <span class="brand-name">Grecovery <span class="version-badge" id="version-badge">v—</span></span>
                 <span class="brand-sub">Gateway Manual Recovery System</span>
             </div>
         </div>
@@ -364,16 +366,18 @@
             const saved = localStorage.getItem('grecovery-theme');
             if (saved === 'dark') applyTheme('dark');
 
-            // Version check
+            // Version check + badge
             try {
                 const vr = await fetch('/api/version');
                 const vd = await vr.json();
+                document.getElementById('version-badge').textContent = `v${vd.local}`;
                 if (vd.update_available) {
                     const banner = document.getElementById('update-banner');
-                    document.getElementById('update-banner-title').textContent = `New version available: v${vd.remote}`;
-                    document.getElementById('update-banner-sub').textContent = `You have v${vd.local}. Download the latest Grecovery to get new features.`;
+                    document.getElementById('update-banner-title').textContent = `Update available: v${vd.remote}`;
+                    document.getElementById('update-banner-sub').textContent = `You\'re on v${vd.local}. Download the latest Grecovery to get new features.`;
                     banner.style.display = 'flex';
-                    appendLog(`Update available: v${vd.remote} (current: v${vd.local})`, "warning");
+                    document.getElementById('version-badge').textContent = `v${vd.local} ↑`;
+                    document.getElementById('version-badge').style.color = '#E65100';
                 }
             } catch (_) {}
 
