@@ -156,21 +156,12 @@
         <!-- Tool Panel -->
         <div class="tool-panel">
 
-            <!-- Step 1 -->
-            <div class="step-card">
-                <div class="step-badge">1</div>
-                <div class="step-content">
-                    <div class="step-title">Find Normal Gateway</div>
-                    <div class="form-group">
-                        <label for="envoy_url">Enlighten Envoy Summary URL</label>
-                        <div class="input-row">
-                            <input type="text" id="envoy_url" placeholder="https://enlighten.enphaseenergy.com/admin/sites/.../envoys/...">
-                            <button class="btn btn-primary" onclick="searchNormalGateway()">
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                                Search
-                            </button>
-                        </div>
-                    </div>
+            <!-- Step 1 – Under Progress -->
+            <div style="background:#FFF8E1;border:1.5px dashed #F9A825;border-radius:12px;padding:1rem 1.4rem;display:flex;align-items:center;gap:1rem;">
+                <div style="width:30px;height:30px;border-radius:50%;background:#F9A825;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem;">🚧</div>
+                <div>
+                    <div style="font-size:0.92rem;font-weight:700;color:#E65100;margin-bottom:0.2rem;">Find Normal Gateway — Under Progress</div>
+                    <div style="font-size:0.8rem;color:#795548;line-height:1.5;">Automatic Enlighten gateway discovery is being built. For now, manually enter the Normal Gateway serial number in Step 2 below.</div>
                 </div>
             </div>
 
@@ -451,9 +442,11 @@
             }
         }
 
-        // Search active gateways
+        // Search active gateways — UNDER PROGRESS
         async function searchNormalGateway() {
-            const url = document.getElementById('envoy_url').value.trim();
+            appendLog("Find Normal Gateway feature is under progress.", "warning");
+            return;
+            const url = '';
             if (!url) {
                 alert("Please enter the Enlighten Envoy Summary URL!");
                 return;
@@ -503,9 +496,7 @@
             }
         }
 
-        function closePicker() {
-            document.getElementById('picker-modal').style.display = 'none';
-        }
+        function closePicker() {}
 
         // Auto-fill the normal gateway parameters based on selection
         function autoFillGateway(sn, partNum, swVersion) {
@@ -581,14 +572,5 @@
         </div>
     </div>
 
-    <!-- Gateway Picker Modal -->
-    <div id="picker-modal" class="modal-overlay" style="display:none;">
-        <div class="modal modal-wide">
-            <div class="modal-title">Matching Active Gateways</div>
-            <div class="picker-info">Active serial numbers matching Part: <strong id="picker_part_num"></strong> &nbsp;·&nbsp; SW: <strong id="picker_sw_version"></strong></div>
-            <div class="gateway-list" id="gateway-list-container"></div>
-            <button class="btn btn-close-picker" onclick="closePicker()">Close</button>
-        </div>
-    </div>
 </body>
 </html>
