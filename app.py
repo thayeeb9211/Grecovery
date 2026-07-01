@@ -350,7 +350,8 @@ def log_message():
 
 if __name__ == '__main__':
     add_log("Gateway recovery tool backend started.", "success")
-    # Auto-open web browser (fixed to open once)
     if os.environ.get('WERKZEUG_RUN_MAIN') != 'true':
         webbrowser.open("http://localhost:5000")
     app.run(port=5000, debug=True)
+else:
+    add_log("Gateway recovery tool loaded.", "success")
