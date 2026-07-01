@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Credentials / local config
+config.json
+
+# Debug dumps from app
+debug_*.html
+
+# Ruby LSP (IDE artifact)
+.ruby-lsp/
+
+# OS
+.DS_Store
+Thumbs.db
