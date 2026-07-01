@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grecovery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --orange: #F37320; --orange-dark: #D95F0A; --orange-light: #FEF0E6; --orange-mid: rgba(243,115,32,0.12);
+            --bg: #F0F2F5; --surface: #FFFFFF; --surface-alt: #F7F8FA;
+            --text: #1A202C; --text-sec: #4A5568; --text-muted: #8A96A8;
+            --border: #E2E8F0; --border-strong: #CBD5E0;
+            --red: #E53E3E; --red-bg: #FFF5F5; --red-border: #FEB2B2;
+            --green: #2F855A; --green-bg: #F0FFF4; --green-border: #9AE6B4;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+            --shadow-lg: 0 12px 32px rgba(0,0,0,0.12);
+            --shadow-orange: 0 4px 16px rgba(243,115,32,0.35);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        /* ── Header ── */
+        header { height: 60px; padding: 0 2rem; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-sm); flex-shrink: 0; position: relative; z-index: 10; }
+        .brand { display: flex; align-items: center; gap: 0.8rem; }
+        .brand-logo { width: 36px; height: 36px; background: var(--orange); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 800; color: #fff; flex-shrink: 0; box-shadow: 0 2px 8px rgba(243,115,32,0.4); }
+        .brand-text { display: flex; flex-direction: column; gap: 1px; }
+        .brand-name { font-size: 1.1rem; font-weight: 700; color: var(--text); letter-spacing: -0.3px; line-height: 1; }
+        .brand-sub { font-size: 0.68rem; color: var(--text-muted); line-height: 1; letter-spacing: 0.2px; }
+        .header-right { display: flex; align-items: center; }
+        .btn-header { background: transparent; border: 1.5px solid var(--border); color: var(--text-sec); cursor: pointer; display: flex; align-items: center; gap: 0.42rem; padding: 0.44rem 0.95rem; border-radius: 8px; font-family: inherit; font-size: 0.8rem; font-weight: 500; transition: all 0.18s; }
+        .btn-header:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-light); }
+
+        /* ── Layout ── */
+        .main-container { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+        .tool-panel { flex: 1; overflow-y: auto; padding: 1.4rem 2rem; display: flex; flex-direction: column; gap: 0.9rem; }
+
+        /* ── Step cards ── */
+        .step-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.4rem; display: flex; gap: 1rem; box-shadow: var(--shadow-sm); transition: box-shadow 0.22s, transform 0.22s; }
+        .step-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+        .step-badge { width: 30px; height: 30px; border-radius: 50%; background: var(--orange); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; color: #fff; flex-shrink: 0; margin-top: 1px; box-shadow: 0 2px 8px rgba(243,115,32,0.38); }
+        .step-content { flex: 1; min-width: 0; }
+        .step-title { font-size: 0.92rem; font-weight: 600; color: var(--text); margin-bottom: 0.8rem; }
+
+        /* ── Forms ── */
+        .form-group { display: flex; flex-direction: column; gap: 0.32rem; }
+        label { font-size: 0.7rem; color: var(--text-muted); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+        input[type=text], input[type=email], input[type=password] { background: var(--surface-alt); border: 1.5px solid var(--border); border-radius: 8px; padding: 0.6rem 0.9rem; color: var(--text); font-family: inherit; font-size: 0.88rem; transition: all 0.18s; width: 100%; }
+        input:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 3px var(--orange-mid); background: #fff; }
+        input::placeholder { color: #b8c1cc; font-size: 0.83rem; }
+        .input-row { display: flex; gap: 0.6rem; align-items: flex-end; }
+        .input-row input { flex: 1; }
+
+        /* ── Gateway cards ── */
+        .gateway-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; }
+        .gateway-card { border-radius: 10px; padding: 1rem 1.05rem; border: 1.5px solid; display: flex; flex-direction: column; gap: 0.65rem; transition: box-shadow 0.2s; }
+        .gateway-card:hover { box-shadow: var(--shadow-sm); }
+        .gateway-card.faulty { background: var(--red-bg); border-color: var(--red-border); }
+        .gateway-card.normal { background: var(--green-bg); border-color: var(--green-border); }
+        .gateway-card.faulty input:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(229,62,62,0.1); }
+        .gateway-card.normal input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(47,133,90,0.12); }
+        .gateway-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.1rem; }
+        .gateway-label-wrap { display: flex; align-items: center; gap: 0.38rem; font-size: 0.8rem; font-weight: 600; }
+        .gateway-label-wrap.faulty { color: var(--red); }
+        .gateway-label-wrap.normal { color: var(--green); }
+        .gw-tag { font-size: 0.61rem; padding: 0.13rem 0.5rem; border-radius: 20px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+        .gw-tag.faulty { background: #FED7D7; color: var(--red); }
+        .gw-tag.normal { background: #C6F6D5; color: var(--green); }
+        .parsed-badges { display: flex; gap: 0.38rem; flex-wrap: wrap; margin-top: 0.15rem; }
+        .badge { display: inline-flex; align-items: center; gap: 0.28rem; font-size: 0.71rem; font-family: 'JetBrains Mono', monospace; padding: 0.18rem 0.5rem; border-radius: 5px; background: #EDF2F7; border: 1px solid var(--border); color: var(--text-sec); }
+        .badge-key { color: var(--text-muted); font-size: 0.64rem; font-weight: 600; }
+
+        /* ── Buttons with Material ripple ── */
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.42rem; border: none; border-radius: 8px; font-family: inherit; font-weight: 600; cursor: pointer; transition: box-shadow 0.2s, transform 0.15s, background 0.18s; white-space: nowrap; position: relative; overflow: hidden; -webkit-tap-highlight-color: transparent; }
+        .btn .ripple { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.45); transform: scale(0); animation: ripple-anim 0.55s linear; pointer-events: none; }
+        @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
+        .btn-primary { background: var(--orange); color: #fff; padding: 0.58rem 1.2rem; font-size: 0.85rem; box-shadow: 0 2px 8px rgba(243,115,32,0.3); }
+        .btn-primary:hover { background: var(--orange-dark); box-shadow: var(--shadow-orange); transform: translateY(-1px); }
+        .btn-primary:active { transform: translateY(0); box-shadow: 0 1px 4px rgba(243,115,32,0.2); }
+        .btn-recover { background: var(--orange); color: #fff; padding: 0.9rem 1.5rem; width: 100%; font-size: 1rem; font-weight: 700; border-radius: 10px; box-shadow: var(--shadow-orange); letter-spacing: 0.1px; }
+        .btn-recover:hover { background: var(--orange-dark); box-shadow: 0 6px 22px rgba(243,115,32,0.48); transform: translateY(-2px); }
+        .btn-recover:active { transform: translateY(0); }
+        .recover-desc { font-size: 0.82rem; color: var(--text-sec); line-height: 1.65; margin-bottom: 1rem; padding: 0.8rem 1rem; background: var(--orange-light); border-left: 3px solid var(--orange); border-radius: 0 8px 8px 0; }
+        .recover-desc strong { color: var(--orange-dark); font-weight: 600; }
+
+        /* ── Console at bottom ── */
+        .console-panel { height: 215px; background: #1E2535; border-top: 1px solid #2D3748; display: flex; flex-direction: column; flex-shrink: 0; }
+        .console-titlebar { height: 38px; background: #252F42; display: flex; align-items: center; justify-content: space-between; padding: 0 1rem 0 1.1rem; flex-shrink: 0; border-bottom: 1px solid #2D3748; }
+        .mac-dots { display: flex; gap: 5px; align-items: center; }
+        .mac-dot { width: 11px; height: 11px; border-radius: 50%; cursor: default; }
+        .mac-dot-red { background: #FF5F57; } .mac-dot-yellow { background: #FEBC2E; } .mac-dot-green { background: #28C840; }
+        .console-titlebar-label { font-size: 0.72rem; font-weight: 600; color: #8896A8; letter-spacing: 1px; text-transform: uppercase; }
+        .console-clear-btn { background: none; border: none; color: #5A6A80; font-size: 0.72rem; font-family: inherit; cursor: pointer; padding: 0.22rem 0.52rem; border-radius: 4px; transition: all 0.15s; }
+        .console-clear-btn:hover { color: #A0AEC0; background: rgba(255,255,255,0.06); }
+        .console-body { flex: 1; padding: 0.55rem 1.2rem; font-family: 'JetBrains Mono', monospace; font-size: 0.77rem; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; line-height: 1.65; }
+        .log-entry { display: flex; gap: 0.55rem; animation: slideUp 0.2s ease-out; }
+        .log-entry .time { color: #3D4F68; flex-shrink: 0; }
+        .log-entry .log-sym { flex-shrink: 0; font-weight: 700; }
+        .log-entry .msg { word-break: break-word; }
+        .log-entry.info .log-sym { color: #4A5568; } .log-entry.info .msg { color: #8A96A8; }
+        .log-entry.success .log-sym, .log-entry.success .msg { color: #68D391; }
+        .log-entry.warning .log-sym, .log-entry.warning .msg { color: #F6AD55; }
+        .log-entry.error .log-sym, .log-entry.error .msg { color: #FC8181; }
+        .log-entry.cmd .log-sym, .log-entry.cmd .msg { color: #B794F4; font-weight: 500; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ── Modals ── */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(26,32,44,0.5); z-index: 100; align-items: center; justify-content: center; backdrop-filter: blur(6px); }
+        .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1.75rem 2rem; width: 100%; max-width: 450px; box-shadow: var(--shadow-lg); }
+        .modal-wide { max-width: 500px; }
+        .modal-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 1.2rem; padding-bottom: 0.85rem; border-bottom: 1px solid var(--border); color: var(--text); display: flex; align-items: center; gap: 0.5rem; }
+        .modal-title::before { content: ''; display: inline-block; width: 4px; height: 18px; background: var(--orange); border-radius: 3px; }
+        .modal-form-group { display: flex; flex-direction: column; gap: 0.3rem; margin-bottom: 1rem; }
+        .modal-actions { display: flex; gap: 0.7rem; margin-top: 1.2rem; }
+        .btn-save { background: var(--orange); color: #fff; padding: 0.62rem 1.1rem; font-size: 0.85rem; flex: 1; box-shadow: 0 2px 8px rgba(243,115,32,0.25); }
+        .btn-save:hover { background: var(--orange-dark); }
+        .btn-cancel { background: var(--surface-alt); border: 1.5px solid var(--border); color: var(--text-sec); padding: 0.62rem 1.1rem; font-size: 0.85rem; flex: 1; }
+        .btn-cancel:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-light); }
+        .picker-info { font-size: 0.82rem; color: var(--text-sec); line-height: 1.5; margin-bottom: 1rem; padding: 0.65rem 1rem; background: var(--orange-light); border-left: 3px solid var(--orange); border-radius: 0 8px 8px 0; }
+        .picker-info strong { color: var(--orange); }
+        .gateway-list { display: flex; flex-direction: column; gap: 0.45rem; margin-bottom: 1rem; max-height: 260px; overflow-y: auto; }
+        .gateway-item { display: flex; align-items: center; gap: 0.7rem; background: var(--surface-alt); border: 1.5px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; cursor: pointer; transition: all 0.18s; font-size: 0.86rem; color: var(--text); font-family: inherit; text-align: left; position: relative; overflow: hidden; }
+        .gateway-item:hover { border-color: var(--orange); background: var(--orange-light); transform: translateX(2px); }
+        .gateway-sn { color: var(--orange); font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 0.88rem; margin-left: auto; }
+        .btn-close-picker { background: var(--surface-alt); border: 1.5px solid var(--border); color: var(--text-sec); padding: 0.6rem 1rem; font-size: 0.85rem; width: 100%; }
+        .btn-close-picker:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-light); }
+
+        /* ── Scrollbars ── */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E0; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #A0AEC0; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand">
+            <div class="brand-logo">G</div>
+            <div class="brand-text">
+                <span class="brand-name">Grecovery</span>
+                <span class="brand-sub">Gateway Manual Recovery System</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="btn-header" onclick="openSettings()" title="Tunnel Credentials">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                Tunnel Credentials
+            </button>
+        </div>
+    </header>
+
+    <div class="main-container">
+
+        <!-- Tool Panel -->
+        <div class="tool-panel">
+
+            <!-- Step 1 -->
+            <div class="step-card">
+                <div class="step-badge">1</div>
+                <div class="step-content">
+                    <div class="step-title">Find Normal Gateway</div>
+                    <div class="form-group">
+                        <label for="envoy_url">Enlighten Envoy Summary URL</label>
+                        <div class="input-row">
+                            <input type="text" id="envoy_url" placeholder="https://enlighten.enphaseenergy.com/admin/sites/.../envoys/...">
+                            <button class="btn btn-primary" onclick="searchNormalGateway()">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                Search
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="step-card">
+                <div class="step-badge">2</div>
+                <div class="step-content">
+                    <div class="step-title">Configure Gateways</div>
+                    <div class="gateway-grid">
+                        <div class="gateway-card faulty">
+                            <div class="gateway-header">
+                                <div class="gateway-label-wrap faulty">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                                    Faulty Gateway
+                                </div>
+                                <span class="gw-tag faulty">Destination</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="faulty_sn">Serial Number</label>
+                                <input type="text" id="faulty_sn" placeholder="e.g. 122119050894">
+                                <input type="hidden" id="f_user" value="mshariff">
+                            </div>
+                            <div class="form-group">
+                                <label for="faulty_ssh">SSH Tunnel Command</label>
+                                <input type="text" id="faulty_ssh" placeholder="ssh -J mshariff@... root@...">
+                                <div class="parsed-badges" id="faulty_parsed">
+                                    <span class="badge"><span class="badge-key">CS</span><span id="f_cs_ip_display">—</span></span>
+                                    <span class="badge"><span class="badge-key">GW</span><span id="f_gw_ip_display">—</span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gateway-card normal">
+                            <div class="gateway-header">
+                                <div class="gateway-label-wrap normal">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                                    Normal Gateway
+                                </div>
+                                <span class="gw-tag normal">Source</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="normal_sn">Serial Number</label>
+                                <input type="text" id="normal_sn" placeholder="e.g. 122105037187">
+                                <input type="hidden" id="n_user" value="mshariff">
+                            </div>
+                            <div class="form-group">
+                                <label for="normal_ssh">SSH Tunnel Command</label>
+                                <input type="text" id="normal_ssh" placeholder="ssh -J mshariff@... root@...">
+                                <div class="parsed-badges" id="normal_parsed">
+                                    <span class="badge"><span class="badge-key">CS</span><span id="n_cs_ip_display">—</span></span>
+                                    <span class="badge"><span class="badge-key">GW</span><span id="n_gw_ip_display">—</span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="step-card">
+                <div class="step-badge">3</div>
+                <div class="step-content">
+                    <div class="step-title">Recovery Target Path</div>
+                    <div class="form-group">
+                        <label for="remote_path">Remote File / Directory Path</label>
+                        <input type="text" id="remote_path" placeholder="e.g. /opt/emu/bin">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="step-card">
+                <div class="step-badge">4</div>
+                <div class="step-content">
+                    <div class="step-title">Execute Recovery</div>
+                    <div class="recover-desc">Launches a PowerShell window that <strong>verifies</strong> the path on the Normal gateway, <strong>downloads</strong> and <strong>uploads</strong> files to the Faulty gateway, then opens an <strong>SSH tunnel</strong> for verification.</div>
+                    <button class="btn btn-recover" id="btn-recover" onclick="runRecoveryStep('recover')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        Run Recovery Pipeline
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Console Panel (bottom) -->
+        <div class="console-panel">
+            <div class="console-titlebar">
+                <div class="mac-dots">
+                    <span class="mac-dot mac-dot-red"></span>
+                    <span class="mac-dot mac-dot-yellow"></span>
+                    <span class="mac-dot mac-dot-green"></span>
+                </div>
+                <span class="console-titlebar-label">Activity Log</span>
+                <button class="console-clear-btn" onclick="clearConsole()">Clear</button>
+            </div>
+            <div class="console-body" id="console-logs">
+                <div class="log-entry info">
+                    <span class="time">[sys]</span>
+                    <span class="log-sym">›</span>
+                    <span class="msg">Grecovery interface ready. Execution steps will be logged here.</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Store parsed values
+        const state = {
+            f_cs_ip: '',
+            f_gw_ip: '',
+            n_cs_ip: '',
+            n_gw_ip: ''
+        };
+
+        // Initialize and load saved configs
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const res = await fetch('/api/config');
+                const config = await res.json();
+                
+                if (config.faulty_sn) document.getElementById('faulty_sn').value = config.faulty_sn;
+                if (config.faulty_ssh) {
+                    document.getElementById('faulty_ssh').value = config.faulty_ssh;
+                    await parseSSH('faulty');
+                }
+                if (config.normal_sn) document.getElementById('normal_sn').value = config.normal_sn;
+                if (config.normal_ssh) {
+                    document.getElementById('normal_ssh').value = config.normal_ssh;
+                    await parseSSH('normal');
+                }
+                if (config.remote_path) document.getElementById('remote_path').value = config.remote_path;
+
+                appendLog("System initialized. Session history loaded successfully.", "success");
+            } catch (err) {
+                appendLog("Failed to load session history from config.", "error");
+            }
+
+            // Set up live parsing listeners
+            document.getElementById('faulty_ssh').addEventListener('input', () => parseSSH('faulty'));
+            document.getElementById('normal_ssh').addEventListener('input', () => parseSSH('normal'));
+
+            // Poll logs periodically
+            setInterval(fetchLogs, 2500);
+        });
+
+        async function parseSSH(type) {
+            const command = document.getElementById(`${type}_ssh`).value.strip || document.getElementById(`${type}_ssh`).value;
+            if (!command) return;
+
+            try {
+                const res = await fetch('/api/parse-ssh', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ssh_command: command })
+                });
+                const parsed = await res.json();
+                
+                state[`${type === 'faulty' ? 'f' : 'n'}_cs_ip`] = parsed.cs_ip;
+                state[`${type === 'faulty' ? 'f' : 'n'}_gw_ip`] = parsed.gw_ip;
+                
+                document.getElementById(`${type === 'faulty' ? 'f' : 'n'}_cs_ip_display`).textContent = parsed.cs_ip || '-';
+                document.getElementById(`${type === 'faulty' ? 'f' : 'n'}_gw_ip_display`).textContent = parsed.gw_ip || '-';
+                
+                if (parsed.cs_user) {
+                    document.getElementById(`${type === 'faulty' ? 'f' : 'n'}_user`).value = parsed.cs_user;
+                }
+            } catch (err) {
+                console.error("Error parsing SSH command", err);
+            }
+        }
+
+        async function runRecoveryStep(step) {
+            // Gather parameters
+            const params = {
+                faulty_sn: document.getElementById('faulty_sn').value,
+                faulty_ssh: document.getElementById('faulty_ssh').value,
+                normal_sn: document.getElementById('normal_sn').value,
+                normal_ssh: document.getElementById('normal_ssh').value,
+                remote_path: document.getElementById('remote_path').value,
+                
+                f_user: document.getElementById('f_user').value,
+                f_cs_ip: state.f_cs_ip,
+                f_gw_ip: state.f_gw_ip,
+                
+                n_user: document.getElementById('n_user').value,
+                n_cs_ip: state.n_cs_ip,
+                n_gw_ip: state.n_gw_ip
+            };
+
+            if (!params.remote_path) {
+                alert("Please enter the remote directory/file path!");
+                return;
+            }
+
+            appendLog(`Initiating step: ${step.toUpperCase()}`, "info");
+
+            try {
+                const res = await fetch('/api/run-step', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ step, params })
+                });
+                
+                const data = await res.json();
+                if (data.status === 'success') {
+                    appendLog(`Successfully triggered external terminal command for ${step}.`, "success");
+                    appendLog(`Command running: ${data.command}`, "cmd");
+                } else {
+                    appendLog(`Error: ${data.message}`, "error");
+                }
+            } catch (err) {
+                appendLog(`Error calling step ${step}: ${err.message}`, "error");
+            }
+        }
+
+        const LOG_SYMS = { info: '›', success: '✓', warning: '⚠', error: '✕', cmd: '»' };
+
+        function appendLog(message, type = "info") {
+            const consoleLogs = document.getElementById('console-logs');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            const now = new Date();
+            const t = `[${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}]`;
+            entry.innerHTML = `<span class="time">${t}</span><span class="log-sym">${LOG_SYMS[type] || '›'}</span><span class="msg">${escapeHTML(message)}</span>`;
+            consoleLogs.appendChild(entry);
+            consoleLogs.scrollTop = consoleLogs.scrollHeight;
+        }
+
+        async function fetchLogs() {
+            try { await fetch('/api/logs'); } catch (err) { }
+        }
+
+        function clearConsole() {
+            document.getElementById('console-logs').innerHTML = `<div class="log-entry info"><span class="time">[sys]</span><span class="log-sym">›</span><span class="msg">Console cleared.</span></div>`;
+        }
+
+        // Open Settings Modal
+        async function openSettings() {
+            try {
+                const res = await fetch('/api/settings');
+                const data = await res.json();
+                document.getElementById('settings_email').value = data.enlighten_email || '';
+                if (data.has_password) {
+                    document.getElementById('settings_password').placeholder = '•••••••• (Stored PIN)';
+                } else {
+                    document.getElementById('settings_password').placeholder = 'Enter Tunnel PIN';
+                }
+            } catch (err) {
+                console.error("Error fetching settings", err);
+            }
+            document.getElementById('settings-modal').style.display = 'flex';
+        }
+
+        function closeSettings() {
+            document.getElementById('settings-modal').style.display = 'none';
+        }
+
+        async function saveSettings() {
+            const email = document.getElementById('settings_email').value;
+            const password = document.getElementById('settings_password').value;
+            
+            try {
+                const res = await fetch('/api/settings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ enlighten_email: email, enlighten_password: password })
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    appendLog("Tunnel credentials saved successfully.", "success");
+                    closeSettings();
+                } else {
+                    alert("Failed to save settings: " + data.message);
+                }
+            } catch (err) {
+                alert("Error saving settings: " + err.message);
+            }
+        }
+
+        // Search active gateways
+        async function searchNormalGateway() {
+            const url = document.getElementById('envoy_url').value.trim();
+            if (!url) {
+                alert("Please enter the Enlighten Envoy Summary URL!");
+                return;
+            }
+
+            appendLog("Sending scraping request to server...", "info");
+
+            try {
+                const res = await fetch('/api/search-gateways', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ envoy_url: url })
+                });
+                
+                const data = await res.json();
+                if (res.status === 400 && data.message.includes("credentials")) {
+                    appendLog("Error: Credentials not configured.", "error");
+                    alert(data.message);
+                    openSettings();
+                    return;
+                }
+
+                if (data.status === 'success') {
+                    // Populate picker dialog
+                    document.getElementById('picker_part_num').textContent = data.part_num;
+                    document.getElementById('picker_sw_version').textContent = data.software_version;
+                    
+                    const container = document.getElementById('gateway-list-container');
+                    container.innerHTML = '';
+                    
+                    data.gateways.forEach(sn => {
+                        const btn = document.createElement('button');
+                        btn.className = 'gateway-item';
+                        btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-dim);flex-shrink:0"><rect x="2" y="7" width="20" height="14" rx="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg><span style="color:var(--text-muted);font-size:.8rem">Serial Number</span><span class="gateway-sn">${sn}</span>`;
+                        btn.onclick = () => autoFillGateway(sn, data.part_num, data.software_version);
+                        container.appendChild(btn);
+                    });
+                    
+                    document.getElementById('picker-modal').style.display = 'flex';
+                    appendLog(`Discovered gateways. Part Number: ${data.part_num}, SW Version: ${data.software_version}`, "success");
+                } else {
+                    appendLog(`Scrape Error: ${data.message}`, "error");
+                    alert(data.message);
+                }
+            } catch (err) {
+                appendLog(`Search error: ${err.message}`, "error");
+            }
+        }
+
+        function closePicker() {
+            document.getElementById('picker-modal').style.display = 'none';
+        }
+
+        // Auto-fill the normal gateway parameters based on selection
+        function autoFillGateway(sn, partNum, swVersion) {
+            document.getElementById('normal_sn').value = sn;
+            
+            const existingCommand = document.getElementById('normal_ssh').value;
+            let csIp = "10.247.177.30"; // default fallback
+            let gatewayIp = "10.9.0.66"; // default fallback
+            
+            if (existingCommand) {
+                const match = existingCommand.match(/-J\s+([^@\s]+)@([\d\.]+)/);
+                if (match) {
+                    csIp = match[2];
+                }
+                const words = existingCommand.trim().split(/\s+/);
+                if (words.length > 0) {
+                    const lastWord = words[words.length - 1];
+                    if (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(lastWord)) {
+                        gatewayIp = lastWord;
+                    }
+                }
+            }
+            
+            document.getElementById('normal_ssh').value = `ssh -L localhost:8088:localhost:80 -J mshariff@${csIp} ${gatewayIp}`;
+            parseSSH('normal');
+            
+            appendLog(`Auto-filled Normal SN: ${sn} and updated tunnel command.`, "success");
+            closePicker();
+        }
+
+        // Material ripple on all .btn elements
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.btn');
+            if (!btn) return;
+            const r = document.createElement('span');
+            r.className = 'ripple';
+            const rect = btn.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            r.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`;
+            btn.appendChild(r);
+            r.addEventListener('animationend', () => r.remove());
+        });
+
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[tag] || tag)
+            );
+        }
+    </script>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal-overlay" style="display:none;">
+        <div class="modal">
+            <div class="modal-title">Tunnel Credentials</div>
+            <div class="modal-form-group">
+                <label for="settings_email">Tunnel Password</label>
+                <input type="password" id="settings_email" placeholder="Enter tunnel password">
+            </div>
+            <div class="modal-form-group">
+                <label for="settings_password">Tunnel PIN</label>
+                <input type="password" id="settings_password" placeholder="Enter tunnel PIN">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-save" onclick="saveSettings()">Save Credentials</button>
+                <button class="btn btn-cancel" onclick="closeSettings()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gateway Picker Modal -->
+    <div id="picker-modal" class="modal-overlay" style="display:none;">
+        <div class="modal modal-wide">
+            <div class="modal-title">Matching Active Gateways</div>
+            <div class="picker-info">Active serial numbers matching Part: <strong id="picker_part_num"></strong> &nbsp;·&nbsp; SW: <strong id="picker_sw_version"></strong></div>
+            <div class="gateway-list" id="gateway-list-container"></div>
+            <button class="btn btn-close-picker" onclick="closePicker()">Close</button>
+        </div>
+    </div>
+</body>
+</html>

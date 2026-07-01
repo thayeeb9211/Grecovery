@@ -1,0 +1,9 @@
+{
+    "faulty_sn": "122031052600\u00a0",
+    "faulty_ssh": "ssh -L localhost:8088:localhost:80 -J mshariff@10.247.176.36 10.9.175.174",
+    "normal_sn": "121625057200",
+    "normal_ssh": "ssh -L localhost:8088:localhost:80 -J mshariff@10.247.178.212 10.9.204.178",
+    "remote_path": "/usr/lib/ruby/2.1.0/rubygems/core_ext",
+    "enlighten_email": "Enphase@2026",
+    "enlighten_password": "129832"
+}
