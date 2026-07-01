@@ -214,7 +214,10 @@ def check_version():
         url = "https://raw.githubusercontent.com/thayeeb9211/Grecovery/main/version.txt"
         with urllib.request.urlopen(url, timeout=5) as r:
             remote_ver = r.read().decode().strip()
-        update_available = remote_ver != local_ver
+        def ver_tuple(v):
+            try: return tuple(int(x) for x in v.strip().split('.'))
+            except: return (0,)
+        update_available = ver_tuple(remote_ver) > ver_tuple(local_ver)
         return jsonify({"local": local_ver, "remote": remote_ver, "update_available": update_available})
     except Exception:
         return jsonify({"local": local_ver, "remote": local_ver, "update_available": False})
