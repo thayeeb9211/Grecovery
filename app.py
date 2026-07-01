@@ -4,11 +4,18 @@ import re
 import json
 import subprocess
 import webbrowser
+import urllib.request
 from flask import Flask, request, jsonify, render_template
 
-app = Flask(__name__, template_folder='templates')
+if getattr(sys, 'frozen', False):
+    BASE_DIR     = os.path.dirname(sys.executable)
+    TEMPLATE_DIR = os.path.join(sys._MEIPASS, 'templates')
+else:
+    BASE_DIR     = os.path.dirname(os.path.abspath(__file__))
+    TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 
-CONFIG_FILE = "config.json"
+app = Flask(__name__, template_folder=TEMPLATE_DIR)
+CONFIG_FILE = os.path.join(BASE_DIR, "config.json")
 session_logs = []
 
 def add_log(message, type="info"):
@@ -193,6 +200,24 @@ def run_step():
             return jsonify({"status": "error", "message": "Failed to launch terminal"}), 500
 
     return jsonify({"status": "error", "message": "Invalid step"}), 400
+
+@app.route('/api/version', methods=['GET'])
+def check_version():
+    local_ver = "1.0.0"
+    try:
+        ver_file = os.path.join(BASE_DIR, 'version.txt')
+        with open(ver_file, 'r') as f:
+            local_ver = f.read().strip()
+    except Exception:
+        pass
+    try:
+        url = "https://raw.githubusercontent.com/thayeeb9211/Grecovery/main/version.txt"
+        with urllib.request.urlopen(url, timeout=5) as r:
+            remote_ver = r.read().decode().strip()
+        update_available = remote_ver != local_ver
+        return jsonify({"local": local_ver, "remote": remote_ver, "update_available": update_available})
+    except Exception:
+        return jsonify({"local": local_ver, "remote": local_ver, "update_available": False})
 
 @app.route('/api/logs', methods=['GET'])
 def get_logs():

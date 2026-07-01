@@ -153,6 +153,18 @@
 
     <div class="main-container">
 
+        <!-- Update Banner (hidden by default) -->
+        <div id="update-banner" style="display:none;background:#E8F5E9;border:1.5px solid #A5D6A7;border-radius:10px;padding:0.75rem 1.2rem;margin:0.9rem 2rem 0;display:none;align-items:center;justify-content:space-between;gap:1rem;">
+            <div style="display:flex;align-items:center;gap:0.7rem;">
+                <span style="font-size:1.1rem;">🎉</span>
+                <div>
+                    <div style="font-size:0.88rem;font-weight:700;color:#2E7D32;" id="update-banner-title">New version available!</div>
+                    <div style="font-size:0.76rem;color:#388E3C;" id="update-banner-sub">A newer version of Grecovery is ready.</div>
+                </div>
+            </div>
+            <a id="update-banner-link" href="https://github.com/thayeeb9211/Grecovery/releases" target="_blank" style="background:#2E7D32;color:#fff;padding:0.45rem 1rem;border-radius:7px;font-size:0.8rem;font-weight:600;text-decoration:none;white-space:nowrap;">Download Update</a>
+        </div>
+
         <!-- Tool Panel -->
         <div class="tool-panel">
 
@@ -299,6 +311,19 @@
             } catch (err) {
                 appendLog("Failed to load session history from config.", "error");
             }
+
+            // Version check
+            try {
+                const vr = await fetch('/api/version');
+                const vd = await vr.json();
+                if (vd.update_available) {
+                    const banner = document.getElementById('update-banner');
+                    document.getElementById('update-banner-title').textContent = `New version available: v${vd.remote}`;
+                    document.getElementById('update-banner-sub').textContent = `You have v${vd.local}. Download the latest Grecovery to get new features.`;
+                    banner.style.display = 'flex';
+                    appendLog(`Update available: v${vd.remote} (current: v${vd.local})`, "warning");
+                }
+            } catch (_) {}
 
             // Set up live parsing listeners
             document.getElementById('faulty_ssh').addEventListener('input', () => parseSSH('faulty'));

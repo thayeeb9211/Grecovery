@@ -9,6 +9,14 @@ config.json
 # Debug dumps from app
 debug_*.html
 
+# PyInstaller build artifacts
+dist/
+build/
+*.spec
+icon.ico
+Grecovery_dist.zip
+Grecovery.zip
+
 # Ruby LSP (IDE artifact)
 .ruby-lsp/
 
