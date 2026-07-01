@@ -29,8 +29,6 @@
         .brand-text { display: flex; flex-direction: column; gap: 1px; }
         .brand-name { font-size: 1.1rem; font-weight: 700; color: var(--text); letter-spacing: -0.3px; line-height: 1; }
         .brand-sub { font-size: 0.68rem; color: var(--text-muted); line-height: 1; letter-spacing: 0.2px; }
-        .version-badge { font-size: 0.62rem; font-weight: 700; color: var(--orange); background: var(--orange-light); border: 1px solid rgba(243,115,32,0.25); border-radius: 20px; padding: 0.1rem 0.52rem; letter-spacing: 0.3px; margin-left: 0.5rem; align-self: center; }
-        [data-theme="dark"] .version-badge { background: rgba(243,115,32,0.12); border-color: rgba(243,115,32,0.3); }
         .header-right { display: flex; align-items: center; }
         .btn-header { background: transparent; border: 1.5px solid var(--border); color: var(--text-sec); cursor: pointer; display: flex; align-items: center; gap: 0.42rem; padding: 0.44rem 0.95rem; border-radius: 8px; font-family: inherit; font-size: 0.8rem; font-weight: 500; transition: all 0.18s; }
         .btn-header:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-light); }
@@ -151,16 +149,6 @@
         [data-theme="dark"] .console-titlebar { background: #0D1320; }
         [data-theme="dark"] .step-card { box-shadow: 0 1px 4px rgba(0,0,0,0.4); }
         [data-theme="dark"] .recover-desc { background: rgba(243,115,32,0.1); }
-        /* Update banner dark mode */
-        .update-banner { background:#E8F5E9; border:1.5px solid #A5D6A7; border-radius:10px; padding:0.75rem 1.2rem; margin:0.9rem 2rem 0; display:none; align-items:center; justify-content:space-between; gap:1rem; }
-        [data-theme="dark"] .update-banner { background:#0D2A0D; border-color:#1E5C1E; }
-        .update-banner-title { font-size:0.88rem; font-weight:700; color:#2E7D32; }
-        [data-theme="dark"] .update-banner-title { color:#68D391; }
-        .update-banner-sub { font-size:0.76rem; color:#388E3C; }
-        [data-theme="dark"] .update-banner-sub { color:#4A9A5A; }
-        .update-banner-btn { background:#2E7D32; color:#fff; padding:0.45rem 1rem; border-radius:7px; font-size:0.8rem; font-weight:600; text-decoration:none; white-space:nowrap; }
-        [data-theme="dark"] .update-banner-btn { background:#1E6B1E; }
-
         /* ── Scrollbars ── */
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
@@ -175,7 +163,7 @@
         <div class="brand">
             <div class="brand-logo">G</div>
             <div class="brand-text">
-                <span class="brand-name">Grecovery <span class="version-badge" id="version-badge">v—</span></span>
+                <span class="brand-name">Grecovery</span>
                 <span class="brand-sub">Gateway Manual Recovery System</span>
             </div>
         </div>
@@ -197,18 +185,6 @@
     </header>
 
     <div class="main-container">
-
-        <!-- Update Banner (hidden by default) -->
-        <div id="update-banner" class="update-banner">
-            <div style="display:flex;align-items:center;gap:0.7rem;">
-                <span style="font-size:1.1rem;">🎉</span>
-                <div>
-                    <div class="update-banner-title" id="update-banner-title">New version available!</div>
-                    <div class="update-banner-sub" id="update-banner-sub">A newer version of Grecovery is ready.</div>
-                </div>
-            </div>
-            <a id="update-banner-link" href="https://github.com/thayeeb9211/Grecovery/releases" target="_blank" class="update-banner-btn">Download Update</a>
-        </div>
 
         <!-- Tool Panel -->
         <div class="tool-panel">
@@ -365,21 +341,6 @@
             // Apply saved theme
             const saved = localStorage.getItem('grecovery-theme');
             if (saved === 'dark') applyTheme('dark');
-
-            // Version check + badge
-            try {
-                const vr = await fetch('/api/version');
-                const vd = await vr.json();
-                document.getElementById('version-badge').textContent = `v${vd.local}`;
-                if (vd.update_available) {
-                    const banner = document.getElementById('update-banner');
-                    document.getElementById('update-banner-title').textContent = `Update available: v${vd.remote}`;
-                    document.getElementById('update-banner-sub').textContent = `You\'re on v${vd.local}. Download the latest Grecovery to get new features.`;
-                    banner.style.display = 'flex';
-                    document.getElementById('version-badge').textContent = `v${vd.local} ↑`;
-                    document.getElementById('version-badge').style.color = '#E65100';
-                }
-            } catch (_) {}
 
             // Set up live parsing listeners
             document.getElementById('faulty_ssh').addEventListener('input', () => parseSSH('faulty'));

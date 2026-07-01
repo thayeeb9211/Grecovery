@@ -4,7 +4,6 @@ import re
 import json
 import subprocess
 import webbrowser
-import urllib.request
 from flask import Flask, request, jsonify, render_template
 
 if getattr(sys, 'frozen', False):
@@ -200,27 +199,6 @@ def run_step():
             return jsonify({"status": "error", "message": "Failed to launch terminal"}), 500
 
     return jsonify({"status": "error", "message": "Invalid step"}), 400
-
-@app.route('/api/version', methods=['GET'])
-def check_version():
-    local_ver = "1.0.0"
-    try:
-        ver_file = os.path.join(BASE_DIR, 'version.txt')
-        with open(ver_file, 'r') as f:
-            local_ver = f.read().strip()
-    except Exception:
-        pass
-    try:
-        url = "https://raw.githubusercontent.com/thayeeb9211/Grecovery/main/version.txt"
-        with urllib.request.urlopen(url, timeout=5) as r:
-            remote_ver = r.read().decode().strip()
-        def ver_tuple(v):
-            try: return tuple(int(x) for x in v.strip().split('.'))
-            except: return (0,)
-        update_available = ver_tuple(remote_ver) > ver_tuple(local_ver)
-        return jsonify({"local": local_ver, "remote": remote_ver, "update_available": update_available})
-    except Exception:
-        return jsonify({"local": local_ver, "remote": local_ver, "update_available": False})
 
 @app.route('/api/logs', methods=['GET'])
 def get_logs():

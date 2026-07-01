@@ -20,7 +20,7 @@ if %errorlevel% neq 0 ( echo ERROR: PyInstaller build failed. & pause & exit /b 
 
 echo [4/4] Packaging for distribution...
 if exist "Grecovery_dist.zip" del "Grecovery_dist.zip"
-powershell -NoProfile -Command "Compress-Archive -Path 'dist\Grecovery.exe','version.txt' -DestinationPath 'Grecovery_dist.zip'"
+powershell -NoProfile -Command "Compress-Archive -Path 'dist\Grecovery.exe' -DestinationPath 'Grecovery_dist.zip'"
 
 echo.
 echo ============================================
