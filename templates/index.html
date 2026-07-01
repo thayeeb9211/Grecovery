@@ -127,10 +127,32 @@
         .btn-close-picker { background: var(--surface-alt); border: 1.5px solid var(--border); color: var(--text-sec); padding: 0.6rem 1rem; font-size: 0.85rem; width: 100%; }
         .btn-close-picker:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-light); }
 
+        /* ── Dark Mode ── */
+        [data-theme="dark"] {
+            --bg: #0D1117; --surface: #161B22; --surface-alt: #1C2230;
+            --text: #E2E8F0; --text-sec: #94A3B8; --text-muted: #4A5568;
+            --border: #21293A; --border-strong: #2D3748;
+            --red-bg: #2D1515; --red-border: #6B2020;
+            --green-bg: #132013; --green-border: #1E4D1E;
+            --orange-light: rgba(243,115,32,0.14); --orange-mid: rgba(243,115,32,0.18);
+        }
+        [data-theme="dark"] body { background: var(--bg); }
+        [data-theme="dark"] input[type=text],
+        [data-theme="dark"] input[type=email],
+        [data-theme="dark"] input[type=password] { background: var(--surface-alt); color: var(--text); border-color: var(--border); }
+        [data-theme="dark"] input:focus { background: #1F2840; }
+        [data-theme="dark"] input::placeholder { color: #3A4A60; }
+        [data-theme="dark"] .modal { background: var(--surface); border-color: var(--border); }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .badge { background: #1C2230; border-color: var(--border); }
+        [data-theme="dark"] .console-panel { background: #090D14; border-top-color: #1A2030; }
+        [data-theme="dark"] .console-titlebar { background: #0D1320; }
+
         /* ── Scrollbars ── */
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #CBD5E0; border-radius: 4px; }
+        [data-theme="dark"] ::-webkit-scrollbar-thumb { background: #2D3748; }
         ::-webkit-scrollbar-thumb:hover { background: #A0AEC0; }
     </style>
 </head>
@@ -144,7 +166,16 @@
                 <span class="brand-sub">Gateway Manual Recovery System</span>
             </div>
         </div>
-        <div class="header-right">
+        <div class="header-right" style="gap:0.5rem;display:flex;align-items:center;">
+            <button class="btn-header" onclick="clearAll()" title="Clear All">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14H6L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M9 6V4h6v2"></path></svg>
+                Clear All
+            </button>
+            <button class="btn-header" id="theme-toggle" onclick="toggleTheme()" title="Toggle Dark / Light Mode">
+                <svg id="theme-icon-moon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                <svg id="theme-icon-sun" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <span id="theme-label">Dark</span>
+            </button>
             <button class="btn-header" onclick="openSettings()" title="Tunnel Credentials">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                 Tunnel Credentials
@@ -282,13 +313,7 @@
                 <span class="console-titlebar-label">Activity Log</span>
                 <button class="console-clear-btn" onclick="clearConsole()">Clear</button>
             </div>
-            <div class="console-body" id="console-logs">
-                <div class="log-entry info">
-                    <span class="time">[sys]</span>
-                    <span class="log-sym">›</span>
-                    <span class="msg">Grecovery interface ready. Execution steps will be logged here.</span>
-                </div>
-            </div>
+            <div class="console-body" id="console-logs"></div>
         </div>
 
     </div>
@@ -320,10 +345,13 @@
                 }
                 if (config.remote_path) document.getElementById('remote_path').value = config.remote_path;
 
-                appendLog("System initialized. Session history loaded successfully.", "success");
             } catch (err) {
-                appendLog("Failed to load session history from config.", "error");
+                appendLog("Failed to load saved config.", "error");
             }
+
+            // Apply saved theme
+            const saved = localStorage.getItem('grecovery-theme');
+            if (saved === 'dark') applyTheme('dark');
 
             // Version check
             try {
@@ -434,7 +462,41 @@
         }
 
         function clearConsole() {
-            document.getElementById('console-logs').innerHTML = `<div class="log-entry info"><span class="time">[sys]</span><span class="log-sym">›</span><span class="msg">Console cleared.</span></div>`;
+            document.getElementById('console-logs').innerHTML = '';
+        }
+
+        function clearAll() {
+            ['faulty_sn','faulty_ssh','normal_sn','normal_ssh','remote_path','part_num','sw_version'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            ['f_cs_ip_display','f_gw_ip_display','n_cs_ip_display','n_gw_ip_display'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = '-';
+            });
+            Object.keys(state).forEach(k => state[k] = '');
+            clearConsole();
+        }
+
+        function applyTheme(mode) {
+            if (mode === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('theme-icon-moon').style.display = 'none';
+                document.getElementById('theme-icon-sun').style.display = 'inline';
+                document.getElementById('theme-label').textContent = 'Light';
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                document.getElementById('theme-icon-moon').style.display = 'inline';
+                document.getElementById('theme-icon-sun').style.display = 'none';
+                document.getElementById('theme-label').textContent = 'Dark';
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const next = isDark ? 'light' : 'dark';
+            applyTheme(next);
+            localStorage.setItem('grecovery-theme', next);
         }
 
         // Open Settings Modal
